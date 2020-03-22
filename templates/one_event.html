@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>日程详情</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>"{{ event.title }}"的详情</h2>
+    <table class="table table-hover">
+        <thead>
+        <tr class="table-info" style="color: #2d6987">
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <p style="color: #2a85a0">describe
+            <a href="/edit" class="btn-large">
+                <button class="btn-large btn-primary">日程管理中心</button>
+            </a>
+        </p>
+            <tr style="color:#075dbb;">
+                <td>{{ event.title }}</td>
+                <td>{{ event.start_time }}</td>
+                <td>{{ event.end_time }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <ul class="list-group">
+  <li class="list-group-item">Cras justo odio</li>
+  <li class="list-group-item">Dapibus ac facilisis in</li>
+  <li class="list-group-item">Morbi leo risus</li>
+  <li class="list-group-item">Porta ac consectetur ac</li>
+  <li class="list-group-item">Vestibulum at eros</li>
+</ul>
+</div>
+
+</body>
+</html>

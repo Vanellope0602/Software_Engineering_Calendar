@@ -17,6 +17,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 # app = Flask(__name__) # 这个已经在app.py里有了
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/wangshanshan/Desktop/软件工程/Bootstrap-Flask-Calendar/python_flask_mysql_bootstrap_calendar_events/database.db'
+
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@127.0.0.1:3306/calendar_system'
 Bootstrap(app)
 db = SQLAlchemy(app)  # 一个代表数据库的class
@@ -61,10 +62,11 @@ class RegisterForm(FlaskForm):
 class EventForm(FlaskForm):
 	event_title = StringField('日程名称', validators=[InputRequired(message='日程名称不能为空噢')])
 	type = SelectField('请选择类别', validators=[InputRequired()],
-								choices=[('event-info','Info蓝色'),('event-important', '重要-红色'), ('event-error','普通-灰色')],
-								id='typearea')
+					   choices=[('event-info', 'Info蓝色'), ('event-important', '重要-红色'), ('event-error', '普通-灰色')],
+					   id='typearea')
 	start = DateTimeField('起始时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='起始日期不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime')
 	end = DateTimeField('结束时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='结束日期也不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime')
+	descirbe = StringField('详细备注') # 可以留空
 	submit = SubmitField('提交')
 
 class SearchForm(FlaskForm):
@@ -165,39 +167,42 @@ def logout():
 
 
 @app.route('/edit', methods=['GET', 'POST'])
-def edit():
+def edit(event_id=None):
 	form = EventForm()
 	# 搜索结果的表单
 	search_form = SearchForm()
 	result = []
 	# 查找出当前用户的所有日程，按起始时间排序
 	all_event_list = Event.query.filter_by(author_name=current_user.username).order_by(Event.start_time).all()
-	for ev in all_event_list:
-		print(ev.title)
-		print(ev.type)
-		print(ev.start_time)
+	# for ev in all_event_list:
+	# 	print(ev.title)
+	# 	print(ev.type)
+	# 	print(ev.start_time)
 
 	if form.validate_on_submit():
 		print("验证成功")
 		new_event = Event(title=form.event_title.data,
-					  url='http://127.0.0.1:5000/edit',
-					  type=form.type.data,
-					  start_time=form.start.data,
-					  end_time=form.end.data,
-					  author_name=current_user.username)
+						  url='http://127.0.0.1:5000/edit',
+						  type=form.type.data,
+						  start_time=form.start.data,
+						  end_time=form.end.data,
+						  author_name=current_user.username)
 		print(new_event.title)
 		print(new_event.type)
-		print(new_event.start_time) # '2020-03-22 12:11:00' 修改为datetime field之后就不需要解析字符串了
-		print(new_event.end_time)   # '2020-03-23 14:30:28'
+		print(new_event.start_time)  # '2020-03-22 12:11:00' 修改为datetime field之后就不需要解析字符串了			print(new_event.end_time)  # '2020-03-23 14:30:28'
 		print(new_event.author_name)
 		try:
 			add(new_event)
+			# add之后就有id
+			new_id = new_event.id
+			tmp_event = Event.query.filter_by(id=new_id).first()
+			tmp_event.url = 'http://127.0.0.1:5000/edit/' + str(new_id)
+			db.session.commit()  # 这样就算修改完成了？！好像是的
 			return redirect(url_for('edit'))
-		except Exception as e: #这里基本不太可能出现Exception了
+		except Exception as e:  # 这里基本不太可能出现Exception了
 			print(e)
 			print("加入这个事件的时候出现了一些问题！")
 			return '加入这个事件的时候出现了一些问题！'
-
 	elif search_form.validate_on_submit():
 		keyword = search_form.keyword.data
 		sql_search = '%' + keyword + '%'
@@ -208,20 +213,25 @@ def edit():
 		print(result)
 		for ev in result:
 			print("下面展示查询结果")
+			print(ev.id)
 			print(ev.title)
 			print(ev.type)
-			print(ev.start_time)
-		# result是一个装有 <Event x> List
-		return render_template('search_result.html',keyword=keyword, search=result, res_len=len(result))
+			print(ev.start_time)			# result是一个装有 <Event x> List
+		return render_template('search_result.html', keyword=keyword, search=result, res_len=len(result))
 
 	print("进入了edit函数即将返回list_and_edit html, 此时搜索结果为：")
 	# 传参数，表格，当前用户，以及用户的所有事件
-
 	return render_template('list_and_edit.html', form=form, search_form=search_form,
 						   user=current_user, event_list=all_event_list, len=len(all_event_list),
 						   search=result,res_len=len(result))
 
-
+@app.route('/edit/<int:event_id>')
+def descirbe(event_id):
+	# 打算在这个页面进行"修改"功能
+	print("此时传入了Event ID % i" % event_id)
+	one_event = Event.query.filter_by(id=event_id).first()  # 只会有一个Event，返回一个class
+	print("查找该Event成功: " + one_event.title)
+	return render_template('one_event.html', event=one_event)
 
 def add(new_event):
 	# 所以这个方法必须登录了之后才可以使用
