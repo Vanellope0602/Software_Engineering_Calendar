@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Login 登录
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="column is-4 is-offset-4">
+            <h3 class="title">登录 Login</h3>
+            <div class="box">
+                <form class="form-signin" method="POST" action="/login">
+                {{ form.hidden_tag() }}
+                <div class="field" align="center">
+                    <div class="control">
+                        {{ wtf.form_field(form.username) }}
+                    </div>
+                </div>
+
+                <div class="field" align="center">
+                    <div class="control">
+                        {{ wtf.form_field(form.password) }}
+                    </div>
+                </div>
+
+                <div class="field" align="center">
+                    <div class="control">
+                        {{ wtf.form_field(form.remember) }}
+                    </div>
+                </div>
+                <button class="button is-block is-info is-fullwidth" type="submit">
+                    Login 登录
+                </button>
+                {% with messages = get_flashed_messages() %}
+                {% if messages[0] == '用户名不存在或密码不正确' %}
+                    <div class="notification is-warning">
+                        {{ messages[0] }}
+                    </div>
+                {% else %}
+                    <div class="notification is-primary">
+                        {{ messages[0] }}. <a href="{{ url_for('login') }}">点击这里去登录</a>.
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </form>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

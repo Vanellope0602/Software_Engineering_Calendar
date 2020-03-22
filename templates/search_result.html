@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>搜索结果页</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>"{{ keyword }}"的搜索结果</h2>
+  <p>按起始时间排序</p>
+    <table class="table table-hover">
+        <thead>
+        <tr class="table-info" style="color: #2d6987">
+            <th>日程名称</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <p style="color: #2a85a0">搜索结果长度为：{{ res_len }}
+            <a href="/edit" class="btn-large">
+                <button class="btn-large btn-primary">日程管理中心</button>
+            </a>
+
+        </p>
+        {%for i in range(0, res_len)%}
+            {% if search[i].type == 'event-info' %}
+                <tr style="color:#075dbb;">
+                        <td>{{ search[i].title }}</td>
+                        <td>{{ search[i].start_time }}</td>
+                        <td>{{ search[i].end_time }}</td>
+                        </tr>
+            {% elif search[i].type == 'event-important'%}
+                <tr style="color:#bf5360;">
+                            <td>{{ search[i].title }}</td>
+                            <td>{{ search[i].start_time }}</td>
+                            <td>{{ search[i].end_time }}</td>
+                          </tr>
+            {% else%}
+                <tr style="color:#606261;">
+                    <td>{{ search[i].title }}</td>
+                    <td>{{ search[i].start_time }}</td>
+                    <td>{{ search[i].end_time }}</td>
+                </tr>
+            {% endif %}
+        {%endfor%}
+        </tbody>
+
+
+    </table>
+
+</div>
+
+</body>
+</html>

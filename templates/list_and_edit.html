@@ -1,0 +1,172 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Event Add{% endblock %}
+
+{% block head %}
+  {{ super() }}
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" />
+    <link type="text/css"  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+{% endblock %}
+
+{% block content %}
+
+    <div class="jumbotron text-center">
+      <h1>日程管理中心</h1>
+      <p>在这里增加、删除、修改你的日程</p>
+    </div>
+
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="container">
+            <h2 style="color: #0088cc">添加日程</h2>
+                <div class="row" style="color: #d6838d">
+                  <div class='col-sm-5'>
+                      <form class="form-signin" method="POST" action="/edit">
+                          {{ form.csrf_token }}
+                          {{ form.hidden_tag() }}
+                          {{ wtf.quick_form(form) }}
+                      </form>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <nav class="navbar">
+                <div class="container">
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end" >
+                            <a href="{{ url_for('index') }}" class="navbar-item">
+                                欢迎页
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="navbar-item">
+                                返回日历
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="informs">
+            <form class="navbar-form navbar-left" method="post">
+                {# python已经写了搜索结果会跳转到search_result action="{{ url_for('edit') }}"#}
+                {{ search_form.hidden_tag() }}
+                {{ wtf.quick_form(search_form) }}
+            </form>
+            </div>
+
+
+        </div>
+      </div>
+
+    <div class="container">
+      <br>
+        <hr>
+      <h1>已安排日程</h1>
+      <p>红色的为重要日程，请慎重删除</p>
+      <table class="table table-hover">
+        <thead>
+          <tr class="table-info" style="color: #2d6987">
+            <th>日程名称</th>
+             <th>日程类型</th>
+            <th>开始时间</th>
+            <th>结束时间</th>
+            <th>修改按钮</th>
+             <th>删除按钮</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%for i in range(0, len)%}
+              {% if event_list[i].type == 'event-info' %}
+                <tr style="color:#075dbb;">
+                <td>{{ event_list[i].title }}</td>
+                <td>{{ event_list[i].type }}</td>
+                <td>{{ event_list[i].start_time }}</td>
+                <td>{{ event_list[i].end_time }}</td>
+                <td>
+                    <button class="btn-warning">修改</button>
+                </td>
+                <td>
+                    <button class="btn-danger" οnclick="delete_key({{event_list[i]}})">删除</button>
+                </td>
+                </tr>
+              {% elif event_list[i].type == 'event-important'%}
+                  <tr style="color:#bf5360;">
+                    <td>{{ event_list[i].title }}</td>
+                    <td>{{ event_list[i].type }}</td>
+                    <td>{{ event_list[i].start_time }}</td>
+                    <td>{{ event_list[i].end_time }}</td>
+                    <td>
+                        <button class="btn-warning">修改</button>
+                    </td>
+                    <td>
+                        <button class="btn-danger">删除</button>
+                    </td>
+                  </tr>
+              {% else%}
+                  <tr style="color:#606261;">
+                    <td>{{ event_list[i].title }}</td>
+                    <td>{{ event_list[i].type }}</td>
+                    <td>{{ event_list[i].start_time }}</td>
+                    <td>{{ event_list[i].end_time }}</td>
+                    <td>
+                        <button class="btn-warning">修改</button>
+                    </td>
+                    <td>
+                        <button class="btn-danger">删除</button>
+                    </td>
+                    </tr>
+              {% endif %}
+
+          {%endfor%}
+
+
+        </tbody>
+      </table>
+    </div>
+
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+    <script type="text/javascript" src="../static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+    <script type="text/javascript">
+        $(function () {
+          $('#datetime').datetimepicker();
+        });
+    </script>
+    <script>
+        function delete_key(r){
+            alert("删除成功");
+            form=document.getElementById("operation");
+            form.action="deleteKeyWords/"+r;
+            form.method="post";
+            form.submit();
+	    }
+    </script>
+    <script>
+        function timetojump(second,jumpurl){
+        var timer= document.getElementById('timer');
+        timer.innerHTML=second;
+        if(--second>0){
+            setTimeout("timetojump("+second+",'"+jumpurl+"')",1000);
+            }
+        else{
+            location.href=jumpurl;
+            }
+        }
+    </script>
+{% endblock %}

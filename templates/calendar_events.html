@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>我的Calendar Events</title>
+	<meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+
+	<link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}"/>
+	<link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.css') }}"/>
+	<link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/calendar.min.css') }}"/>
+    <link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" />
+    <link type="text/css"  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css"/>
+
+</head>
+<body>
+    {# 这个Container 是居中的，已经由CSS决定，下面加个头#}
+    <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end">
+                            <a href="{{ url_for('index') }}" class="navbar-item">
+                                欢迎页
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="navbar-item">
+                                日历
+                            </a>
+                            <a href="{{ url_for('login') }}" class="navbar-item">
+                                登录
+                            </a>
+                            <a href="{{ url_for('signup') }}" class="navbar-item">
+                                注册
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                                登出
+                            </a>
+                            <a class="navbar-item" style="color: #d6838d">
+                                Hello! {{ name }}！
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+	<div class="container">
+        {#小标题和页面导航#}
+        <br>
+		<div class="page-header">
+            {#导航栏，前后今天，年月周日#}
+			<div class="pull-right form-inline">
+				<div class="btn-group">
+					<button class="btn btn-primary" data-calendar-nav="prev"><< 前一项</button>
+					<button class="btn" data-calendar-nav="today">今天</button>
+					<button class="btn btn-primary" data-calendar-nav="next">后一项 >></button>
+				</div>
+				<div class="btn-group">
+					<button class="btn btn-danger" data-calendar-view="year">年</button>
+					<button class="btn btn-warning active" data-calendar-view="month">月</button>
+					<button class="btn btn-toolbar" data-calendar-view="week">周</button>
+					<button class="btn btn-success" data-calendar-view="day">日</button>
+				</div>
+			</div>
+
+			<h3></h3>
+		</div>
+        {#登陆表单#}
+
+        {#显示日历、年历、周历 和 控制日历显示方式#}
+		<div class="row">
+			<div class="span9">
+				<div id="calendar"></div>
+			</div>
+			<div class="span2">
+                {# span后的数字调整长度，若是太长(>3)了则放不到右侧#}
+				<div class="row-fluid">
+					<select id="first_day" class="span12">
+						<option value="" selected="selected">每周首日为周日</option>
+						<option value="1">每周首日为周一</option>
+					</select>
+					<label class="checkbox">
+						<input type="checkbox" value="#events-modal" id="events-in-modal"> 在模式窗口中打开Events
+					</label>
+					<label class="checkbox">
+						<input type="checkbox" id="format-12-hours"> 打开12小时制
+					</label>
+					<label class="checkbox">
+						<input type="checkbox" id="show_wb" checked> 月历上展示星期标签
+					</label>
+					<label class="checkbox">
+						<input type="checkbox" id="show_wbn" checked> 星期标签上展示周数
+					</label>
+                    <br>
+                    <a href="/edit" class="btn-large">
+                        <button class="btn-large btn-primary">日程管理中心</button>
+                    </a>
+
+
+				</div>
+			</div>
+		</div>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="../static/js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+        {#上面的datepicker是自己加的，应该是用到了jquery的JS#}
+        <script>
+            $("#datetime").datetimepicker();
+        </script>
+
+		<div class="clearfix"></div>
+		<br><br>
+        {# 弹出的小窗口 用于编辑/查看详细/删除事件#}
+		<div class="modal hide fade" id="events-modal">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>查看事件</h3>
+			</div>
+			<div class="modal-body" style="height: 500px">
+			</div>
+			<div class="modal-footer">
+				<a href="#" data-dismiss="modal" class="btn">Close</a>
+                <a href="#" data-dismiss="modal" class="btn-large">提交</a>
+			</div>
+		</div>
+
+		<h3>这里是测试calendar_eventsJS部分前面的东西</h3>
+
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+
+		<!--<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>-->
+		<!--<script type="text/javascript" src="{{ url_for('static', filename='js/underscore-min.js') }}"></script>-->
+		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/calendar.min.js') }}"></script>
+
+        {# JavaScript部分开始#}
+		<script>
+			(function($) {
+				"use strict";
+				var options = {
+					events_source: 'http://127.0.0.1:5000/calendar-events',
+					view: 'month',
+					tmpl_path: '../../static/tmpls/',
+					tmpl_cache: false,
+					onAfterViewLoad: function(view) {
+						$('.page-header h3').text(this.getTitle());
+						$('.btn-group button').removeClass('active');
+						$('button[data-calendar-view="' + view + '"]').addClass('active');
+					},
+					classes: {
+						months: {
+							general: 'label'
+						}
+					}
+				};
+
+				var calendar = $('#calendar').calendar(options);
+
+				$('.btn-group button[data-calendar-nav]').each(function(){
+					var $this = $(this);
+					$this.click(function() {
+						calendar.navigate($this.data('calendar-nav'));
+					});
+				});
+
+				$('.btn-group button[data-calendar-view]').each(function(){
+					var $this = $(this);
+					$this.click(function() {
+						calendar.view($this.data('calendar-view'));
+					});
+				});
+
+				$('#first_day').change(function(){
+					var value = $(this).val();
+					value = value.length ? parseInt(value) : null;
+					calendar.setOptions({first_day: value});
+					calendar.view();
+				});
+
+				$('#events-in-modal').change(function(){
+					var val = $(this).is(':checked') ? $(this).val() : null;
+					calendar.setOptions({modal: val});
+				});
+				$('#format-12-hours').change(function(){
+					var val = $(this).is(':checked') ? true : false;
+					calendar.setOptions({format12: val});
+					calendar.view();
+				});
+				$('#show_wbn').change(function(){
+					var val = $(this).is(':checked') ? true : false;
+					calendar.setOptions({display_week_numbers: val});
+					calendar.view();
+				});
+				$('#show_wb').change(function(){
+					var val = $(this).is(':checked') ? true : false;
+					calendar.setOptions({weekbox: val});
+					calendar.view();
+				});
+				$('#events-modal .modal-header, #events-modal .modal-footer').click(function(e){
+					//e.preventDefault();
+					//e.stopPropagation();
+				});
+			}(jQuery));
+		</script>
+        {# JavaScript部分结束#}
+	</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up 注册
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="column is-4 is-offset-4">
+            <h3 class="title">注册 Sign Up</h3>
+            <div class="box">
+                <form class="form-signin" method="POST" action="/signup">
+                    {{ form.hidden_tag() }}
+{#                    {{ wtf.quick_form(form) }}#}
+                    <div class="field" align="center">
+                        <div class="control">
+                            {{ wtf.form_field(form.username) }}
+                        </div>
+                    </div>
+                    <div class="field" align="center">
+                        <div class="control">
+                            {{ wtf.form_field(form.email) }}
+                        </div>
+                    </div>
+
+                    <div class="field" align="center">
+                        <div class="control">
+                            {{ wtf.form_field(form.password) }}
+                        </div>
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted">我们不会把你的数据分享给任何人.</small>
+                    {#The form that inherit the wtf#}
+                    <button class="button is-block is-info is-fullwidth" type="submit">
+                        Sign Up 注册
+                    </button>
+
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages[0] == '注册成功' %}
+                        <div class="notification is-primary">
+                            {{ messages[0] }}. <a href="{{ url_for('login') }}">点击这里去登录</a>.
+                        </div>
+                    {% else %}
+                        <div class="notification is-warning">
+                            {{ messages[0] }}. <a href="{{ url_for('login') }}">点击这里去登录</a>.
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                    {# Above is to show the message that the user exists#}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
