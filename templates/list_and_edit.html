@@ -97,7 +97,7 @@
                     <button class="btn-warning">修改</button>
                 </td>
                 <td>
-                    <button class="btn-danger" οnclick="delete_key({{event_list[i]}})">删除</button>
+					<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
                 </td>
                 </tr>
               {% elif event_list[i].type == 'event-important'%}
@@ -110,7 +110,7 @@
                         <button class="btn-warning">修改</button>
                     </td>
                     <td>
-                        <button class="btn-danger">删除</button>
+						<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
                     </td>
                   </tr>
               {% else%}
@@ -123,7 +123,7 @@
                         <button class="btn-warning">修改</button>
                     </td>
                     <td>
-                        <button class="btn-danger">删除</button>
+						<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
                     </td>
                     </tr>
               {% endif %}
@@ -148,26 +148,22 @@
           $('#datetime-start').datetimepicker();
           $('#datetime-end').datetimepicker();
         });
-    </script>
-    <script>
-        function delete_key(r){
-            alert("删除成功");
-            form=document.getElementById("operation");
-            form.action="deleteKeyWords/"+r;
-            form.method="post";
-            form.submit();
-	    }
-    </script>
-    <script>
+
+		function deleteEntry(r){
+			console.log('Delete ' + r)
+			// 直接跳转到对应的页面，这是一种偷懒的方法，并不规范
+			window.location.replace("/delete/" + r);
+		}
+
         function timetojump(second,jumpurl){
-        var timer= document.getElementById('timer');
-        timer.innerHTML=second;
-        if(--second>0){
-            setTimeout("timetojump("+second+",'"+jumpurl+"')",1000);
-            }
-        else{
-            location.href=jumpurl;
-            }
+			var timer= document.getElementById('timer');
+			timer.innerHTML=second;
+			if(--second>0){
+				setTimeout("timetojump("+second+",'"+jumpurl+"')",1000);
+				}
+			else{
+				location.href=jumpurl;
+				}
         }
     </script>
 {% endblock %}

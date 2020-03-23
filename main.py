@@ -183,7 +183,7 @@ def edit(event_id=None):
 	if form.validate_on_submit():
 		print("验证成功")
 		new_event = Event(title=form.event_title.data,
-						  url='http://127.0.0.1:5000/edit',
+                    url='http://127.0.0.1:5000/edit', # TODO: 这里应该用reverse，不应该用写死的url
 						  type=form.type.data,
 						  start_time=form.start.data,
 						  end_time=form.end.data,
@@ -193,6 +193,7 @@ def edit(event_id=None):
 		print(new_event.start_time)  # '2020-03-22 12:11:00' 修改为datetime field之后就不需要解析字符串了			print(new_event.end_time)  # '2020-03-23 14:30:28'
 		print(new_event.author_name)
 		try:
+                        # TODO: 应当检查开始时间不晚于结束时间
 			add(new_event)
 			# add之后就有id
 			new_id = new_event.id
@@ -241,8 +242,15 @@ def add(new_event):
 	# 添加完之后应该跳转回edit页面，也就是全展示的页面
 	#return redirect(url_for('edit'))
 
-def delete(Event):
-	db.delete(Event)
+@app.route('/delete/<int:event_id>')
+def delete(event_id):
+    conn = sqlite3.connect("database.db")	# 连接sqlite
+    cursor = conn.cursor()
+    sql_delete = 'DELETE FROM event WHERE id={}'.format(event_id)
+    cursor.execute(sql_delete)
+    conn.commit()
+    conn.close()
+    return redirect(url_for('edit'))
 
 def check(event_name):
 	# event name is a string
