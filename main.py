@@ -13,10 +13,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
+PROJECT_ROOT = '/Users/fandahao1/Documents/20Spring/SoftwareEngineer/Software_Engineering_Calendar'
 
 # app = Flask(__name__) # 这个已经在app.py里有了
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/wangshanshan/Desktop/软件工程/Bootstrap-Flask-Calendar/python_flask_mysql_bootstrap_calendar_events/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + PROJECT_ROOT + '/database.db'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@127.0.0.1:3306/calendar_system'
 Bootstrap(app)
@@ -64,8 +65,8 @@ class EventForm(FlaskForm):
 	type = SelectField('请选择类别', validators=[InputRequired()],
 					   choices=[('event-info', 'Info蓝色'), ('event-important', '重要-红色'), ('event-error', '普通-灰色')],
 					   id='typearea')
-	start = DateTimeField('起始时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='起始日期不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime')
-	end = DateTimeField('结束时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='结束日期也不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime')
+	start = DateTimeField('起始时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='起始日期不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime-start')
+	end = DateTimeField('结束时间（格式：yyyy/mm/dd hh:mm）', validators=[InputRequired(message='结束日期也不能为空噢')], format='%Y/%m/%d %H:%M',id='datetime-end')
 	descirbe = StringField('详细备注') # 可以留空
 	submit = SubmitField('提交')
 
