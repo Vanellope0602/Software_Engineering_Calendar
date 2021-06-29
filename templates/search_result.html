@@ -8,11 +8,35 @@
   <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
   <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
 </head>
 <body>
 
 <div class="container">
-  <h2>"{{ keyword }}"的搜索结果</h2>
+  <h2 class="title">"{{ keyword }}"的搜索结果</h2>
+     <nav class="navbar">
+                <div class="container">
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end" >
+                            <a href="{{ url_for('index') }}" class="navbar-item">
+                                欢迎页
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="navbar-item">
+                                日历
+                            </a>
+                            <a href="{{ url_for('edit') }}" class="navbar-item">
+                                日程管理中心
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                                登出
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+
   <p>按起始时间排序</p>
     <table class="table table-hover">
         <thead>
@@ -20,14 +44,11 @@
             <th>日程名称</th>
             <th>开始时间</th>
             <th>结束时间</th>
+            <th>按钮</th>
         </tr>
         </thead>
         <tbody>
-        <p style="color: #2a85a0">搜索结果长度为：{{ res_len }}
-            <a href="/edit" class="btn-large">
-                <button class="btn-large btn-primary">日程管理中心</button>
-            </a>
-
+        <p style="color: #2a85a0" class="subtitle">搜索结果长度为：{{ res_len }}
         </p>
         {%for i in range(0, res_len)%}
             {% if search[i].type == 'event-info' %}
@@ -35,18 +56,27 @@
                         <td>{{ search[i].title }}</td>
                         <td>{{ search[i].start_time }}</td>
                         <td>{{ search[i].end_time }}</td>
+                        <td>
+                            <button onclick="window.location.href ='/edit/{{ search[i].id }}'" class="btn-warning">修改/详情</button>
+                        </td>
                         </tr>
             {% elif search[i].type == 'event-important'%}
                 <tr style="color:#bf5360;">
-                            <td>{{ search[i].title }}</td>
-                            <td>{{ search[i].start_time }}</td>
-                            <td>{{ search[i].end_time }}</td>
-                          </tr>
+                    <td>{{ search[i].title }}</td>
+                    <td>{{ search[i].start_time }}</td>
+                    <td>{{ search[i].end_time }}</td>
+                    <td>
+                        <button onclick="window.location.href ='/edit/{{ search[i].id }}'" class="btn-warning">修改/详情</button>
+                    </td>
+                </tr>
             {% else%}
                 <tr style="color:#606261;">
                     <td>{{ search[i].title }}</td>
                     <td>{{ search[i].start_time }}</td>
                     <td>{{ search[i].end_time }}</td>
+                    <td>
+                        <button onclick="window.location.href ='/edit/{{ search[i].id }}'" class="btn-warning">修改/详情</button>
+                    </td>
                 </tr>
             {% endif %}
         {%endfor%}

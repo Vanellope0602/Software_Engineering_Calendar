@@ -36,10 +36,6 @@ Login 登录
                     <div class="notification is-warning">
                         {{ messages[0] }}
                     </div>
-                {% else %}
-                    <div class="notification is-primary">
-                        {{ messages[0] }}. <a href="{{ url_for('login') }}">点击这里去登录</a>.
-                    </div>
                 {% endif %}
                 {% endwith %}
             </form>

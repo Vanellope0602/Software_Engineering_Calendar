@@ -5,6 +5,8 @@
 
 {% block head %}
   {{ super() }}
+{#    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">#}
+
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -12,32 +14,49 @@
     <link type="text/css"  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css"/>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+
+    {# 用于实现轮播的插件#}
+{#     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">#}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block content %}
 
-    <div class="jumbotron text-center">
+    <div class="jumbotron text-center" >
       <h1>日程管理中心</h1>
-      <p>在这里增加、删除、修改你的日程</p>
+      <p>在这里增加、查找、删除、修改你的日程</p>
     </div>
-
 
     <div class="container">
       <div class="row">
         <div class="col-sm-6">
             <div class="container">
-            <h2 style="color: #0088cc">添加日程</h2>
+            <h2 class="subtitle" style="color: #1d5987" id="addevent">添加日程</h2>
+                <script>
+                    document.getElementById("addevent").style.fontSize="larger";
+                    document.getElementById("addevent").style.fontStyle="bold"
+                </script>
+
                 <div class="row" style="color: #d6838d">
                   <div class='col-sm-5'>
                       <form class="form-signin" method="POST" action="/edit">
                           {{ form.csrf_token }}
                           {{ form.hidden_tag() }}
                           {{ wtf.quick_form(form) }}
+                          {% with messages = get_flashed_messages() %}
+                              {% if messages[0] == '结束时间不得早于起始时间' %}
+                                  <div class="item">
+                                      <p>{{ messages[0] }}</p>
+                                  </div>
+                              {% endif %}
+                          {% endwith %}
                       </form>
                   </div>
                 </div>
             </div>
         </div>
+
         <div class="col-sm-6">
             <nav class="navbar">
                 <div class="container">
@@ -47,16 +66,15 @@
                                 欢迎页
                             </a>
                             <a href="{{ url_for('dashboard') }}" class="navbar-item">
-                                返回日历
+                                日历
                             </a>
                             <a href="{{ url_for('logout') }}" class="navbar-item">
-                                Logout
+                                登出
                             </a>
                         </div>
                     </div>
                 </div>
             </nav>
-
             <div class="informs">
             <form class="navbar-form navbar-left" method="post">
                 {# python已经写了搜索结果会跳转到search_result action="{{ url_for('edit') }}"#}
@@ -64,15 +82,73 @@
                 {{ wtf.quick_form(search_form) }}
             </form>
             </div>
+            <br>
+            <hr>
+            <h2 class="subtitle" style="color: #1d5987" id="addevent">未来日程:{{ next_num }}个，滚动播放最近三个⬇️</h2>
+            {# 轮播#}
+            <div class="container">
 
+  <div id="myCarousel" class="carousel slide" data-ride="carousel" style="width:500px;height: 192px">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
 
-        </div>
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      <div class="item active">
+          <img src="/static/calendar1.jpg" alt="pic" style="width:500px; height: auto; display: flex">
+            {% if next_num >= 1 %}
+            <div class="carousel-caption text-center">
+                <h1 class="title" style="color: #296078">{{ next[0].title }}</h1>
+                <h2 class="subtitle" style="color: #296078">{{ next[0].start_time }}</h2>
+            </div>
+            {% endif %}
       </div>
+
+      <div class="item">
+        <img src="/static/rose.jpg" alt="pic" style="width:500px; height: auto; display: flex">
+          {% if next_num >= 2 %}
+              <div class="carousel-caption text-center">
+                  <h1 class="title" style="color: white">{{ next[1].title }}</h1>
+                  <h2 class="subtitle" style="color: white">{{ next[1].start_time }}</h2>
+              </div>
+          {% endif %}
+      </div>
+
+      <div class="item">
+        <img src="/static/butterfly.jpg" alt="pic" style="width:500px; height: auto; display: flex">
+          {% if next_num >= 3%}
+              <div class="carousel-caption text-center top" align="top">
+                  <h1 class="title" style="color: white">{{ next[2].title }}</h1>
+                  <h2 class="subtitle" style="color: white">{{ next[2].start_time }}</h2>
+              </div>
+          {% endif %}
+      </div>
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
+          </div> <!-- 网页右半部分结束-->
+        </div>
+    </div>
 
     <div class="container">
       <br>
         <hr>
-      <h1>已安排日程</h1>
+      <h2 class="subtitle" style="color: #1d5987">已安排日程：{{ len }} 个</h2>
       <p>红色的为重要日程，请慎重删除</p>
       <table class="table table-hover">
         <thead>
@@ -90,11 +166,11 @@
               {% if event_list[i].type == 'event-info' %}
                 <tr style="color:#075dbb;">
                 <td>{{ event_list[i].title }}</td>
-                <td>{{ event_list[i].type }}</td>
+                <td> Info-蓝色 </td>
                 <td>{{ event_list[i].start_time }}</td>
                 <td>{{ event_list[i].end_time }}</td>
                 <td>
-                    <button class="btn-warning">修改</button>
+                    <button onclick="window.location.href ='/edit/{{ event_list[i].id }}'" class="btn-warning">修改</button>
                 </td>
                 <td>
 					<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
@@ -103,11 +179,11 @@
               {% elif event_list[i].type == 'event-important'%}
                   <tr style="color:#bf5360;">
                     <td>{{ event_list[i].title }}</td>
-                    <td>{{ event_list[i].type }}</td>
+                    <td> 重要-红色 </td>
                     <td>{{ event_list[i].start_time }}</td>
                     <td>{{ event_list[i].end_time }}</td>
                     <td>
-                        <button class="btn-warning">修改</button>
+                        <button onclick="window.location.href ='/edit/{{ event_list[i].id }}'" class="btn-warning">修改</button>
                     </td>
                     <td>
 						<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
@@ -116,11 +192,11 @@
               {% else%}
                   <tr style="color:#606261;">
                     <td>{{ event_list[i].title }}</td>
-                    <td>{{ event_list[i].type }}</td>
+                    <td> 普通-灰色 </td>
                     <td>{{ event_list[i].start_time }}</td>
                     <td>{{ event_list[i].end_time }}</td>
                     <td>
-                        <button class="btn-warning">修改</button>
+                        <button onclick="window.location.href ='/edit/{{ event_list[i].id }}'" class="btn-warning">修改</button>
                     </td>
                     <td>
 						<input type="button" class="btn-danger" value="删除" onclick="deleteEntry({{event_list[i].id}});">
@@ -150,20 +226,21 @@
         });
 
 		function deleteEntry(r){
-			console.log('Delete ' + r)
-			// 直接跳转到对应的页面，这是一种偷懒的方法，并不规范
-			window.location.replace("/delete/" + r);
+		    if(confirm("确实要删除吗？")){
+		        console.log('Delete ' + r)
+                alert("删除日程成功！")
+                // 直接跳转到对应的页面，这是一种偷懒的方法，并不规范
+                window.location.replace("/delete/" + r);
+            }else {
+                alert("已经取消了删除操作");
+            }
 		}
 
-        function timetojump(second,jumpurl){
-			var timer= document.getElementById('timer');
-			timer.innerHTML=second;
-			if(--second>0){
-				setTimeout("timetojump("+second+",'"+jumpurl+"')",1000);
-				}
-			else{
-				location.href=jumpurl;
-				}
-        }
+
     </script>
+
+    <div class="jumbotron text-center" style="margin-bottom:0">
+        <p>作者：Vanellope</p>
+        <p>邮箱：wangss@buaa.edu.cn</p>
+    </div>
 {% endblock %}

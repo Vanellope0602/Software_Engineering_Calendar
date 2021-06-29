@@ -1,32 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>日程详情</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-  <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</head>
-<body>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
+{% block title %}Event Add{% endblock %}
+
+{% block head %}
+  {{ super() }}
+   <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link type="text/css"  rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" />
+    <link type="text/css"  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+{% endblock %}
+
+{% block content %}
 <div class="container">
-  <h2>"{{ event.title }}"的详情</h2>
-    <table class="table table-hover">
+  <h1 class="title">"{{ event.title }}"的详情</h1>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+            <table class="table table-hover">
         <thead>
         <tr class="table-info" style="color: #2d6987">
-            <th></th>
-            <th></th>
-            <th></th>
+            <th>日程名称</th>
+            <th>起始时间</th>
+            <th>结束时间</th>
         </tr>
         </thead>
         <tbody>
-        <p style="color: #2a85a0">describe
-            <a href="/edit" class="btn-large">
-                <button class="btn-large btn-primary">日程管理中心</button>
-            </a>
-        </p>
+            <p style="color: #2a85a0" class="subtitle">日程详细，右侧提交可修改日程内容</p>
+            <hr>
+
             <tr style="color:#075dbb;">
                 <td>{{ event.title }}</td>
                 <td>{{ event.start_time }}</td>
@@ -34,14 +41,67 @@
             </tr>
         </tbody>
     </table>
-    <ul class="list-group">
-  <li class="list-group-item">Cras justo odio</li>
-  <li class="list-group-item">Dapibus ac facilisis in</li>
-  <li class="list-group-item">Morbi leo risus</li>
-  <li class="list-group-item">Porta ac consectetur ac</li>
-  <li class="list-group-item">Vestibulum at eros</li>
-</ul>
+
+            <ul class="list-group">
+                <li class="list-group-item">备注：{{ event.descirbe }}</li>
+                <li class="list-group-item">
+                    <a href="/edit" class="btn-large">
+                        <button class="btn-large btn-primary">日程管理中心</button>
+                    </a>
+                    <a href="/dashboard" class="btn-large">
+                        <button class="btn-large btn-success">回到日历</button>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <nav class="navbar">
+                <div class="container">
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end" >
+                            <a href="{{ url_for('index') }}" class="navbar-item">
+                                欢迎页
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="navbar-item">
+                                日历
+                            </a>
+                            <a href="{{ url_for('edit') }}" class="navbar-item">
+                                日程管理中心
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                                登出
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            {{ form.hidden_tag() }}
+            {{ wtf.quick_form(form) }}
+            {% with messages = get_flashed_messages() %}
+                {% if messages[0] == '结束时间不得早于起始时间' %}
+                    <div class="item" style="color: #d65f6c">
+                        <p>{{ messages[0] }}</p>
+                    </div>
+                {% endif %}
+            {% endwith %}
+         </div>
+      </div>
+    </div>
+
+
+
 </div>
 
-</body>
-</html>
+{% block scripts %}
+  {{ super() }}
+    <script type="text/javascript" src="../static/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+    <script type="text/javascript">
+        $(function () {
+          $('#datetime-start').datetimepicker();
+          $('#datetime-end').datetimepicker();
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}
